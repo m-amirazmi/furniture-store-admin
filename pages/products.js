@@ -1,4 +1,159 @@
+import { useState } from "react";
+
 export default function ProductsPage() {
+	const [input, setInput] = useState({});
+
+	const handleAddProduct = () => {};
+
+	const renderUpdateModal = () => {
+		return (
+			<div className="modal fade" id="addProduct" tabIndex="-1" aria-labelledby="addProductLabel" aria-hidden="true">
+				<div className="modal-dialog">
+					<div className="modal-content">
+						<div className="modal-header">
+							<h5 className="modal-title" id="addProductLabel">
+								Update Category
+							</h5>
+							<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div className="modal-body">
+							<div className="mb-3">
+								<label htmlFor="name" className="form-label">
+									Name
+								</label>
+								<input
+									type="text"
+									className="form-control"
+									id="name"
+									placeholder="eg: Chair"
+									value={input.name}
+									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
+								/>
+							</div>
+							<div className="mb-3">
+								<label htmlFor="vendor" className="form-label">
+									Vendor
+								</label>
+								<input
+									type="text"
+									className="form-control"
+									id="vendor"
+									placeholder="eg: Chair Sdn Bhd"
+									value={input.vendor}
+									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
+								/>
+							</div>
+							<div className="mb-3">
+								<label htmlFor="quantity" className="form-label">
+									Quantity
+								</label>
+								<input
+									type="number"
+									className="form-control"
+									id="quantity"
+									placeholder="eg: 10"
+									value={input.quantity}
+									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
+								/>
+							</div>
+							<div className="mb-3">
+								<label htmlFor="price" className="form-label">
+									Price
+								</label>
+								<input
+									type="number"
+									className="form-control"
+									id="price"
+									placeholder="eg: 12.90"
+									value={input.price}
+									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
+								/>
+							</div>
+							<div className="mb-3">
+								<label htmlFor="name" className="form-label">
+									SKU
+								</label>
+								<input
+									type="text"
+									className="form-control"
+									id="text"
+									placeholder="eg: 12345869"
+									value={input.name}
+									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
+								/>
+							</div>
+							<div className="mb-3">
+								<label htmlFor="name" className="form-label">
+									Colors
+								</label>
+								<input
+									type="name"
+									className="form-control"
+									id="name"
+									placeholder="eg: Chair"
+									value={input.name}
+									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
+								/>
+							</div>
+							<div className="mb-3">
+								<label htmlFor="discount" className="form-label">
+									Discount
+								</label>
+								<input
+									type="number"
+									className="form-control"
+									id="name"
+									placeholder="eg: Chair"
+									value={input.name}
+									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
+								/>
+							</div>
+							<div className="mb-3">
+								<label htmlFor="name" className="form-label">
+									Description
+								</label>
+								<input
+									type="name"
+									className="form-control"
+									id="name"
+									placeholder="eg: Chair"
+									value={input.name}
+									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
+								/>
+							</div>
+							<div className="mb-3">
+								<input
+									className="form-check-input me-1"
+									type="checkbox"
+									checked={input.isFeatured}
+									id="isFeatured"
+									onChange={({ target }) => setInput({ ...input, [target.id]: target.checked })}
+								/>
+								Featured?
+							</div>
+						</div>
+						<div className="modal-footer">
+							<button
+								type="button"
+								className="btn btn-secondary"
+								data-bs-dismiss="modal"
+								onClick={() => {
+									setInput({ name: "" });
+									setSelected({});
+								}}
+							>
+								Close
+							</button>
+							<button type="button" className="btn btn-primary" onClick={handleAddProduct} data-bs-dismiss="modal">
+								Save changes
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	};
+
 	return (
 		<>
 			<div className="container py-5">
@@ -45,6 +200,7 @@ export default function ProductsPage() {
 					</tbody>
 				</table>
 			</div>
+			{renderUpdateModal()}
 		</>
 	);
 }
