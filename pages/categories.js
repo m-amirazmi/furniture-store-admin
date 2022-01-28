@@ -69,8 +69,6 @@ export default function CategoriesPage() {
 		}
 	};
 
-	console.log(input);
-
 	const renderUpdateModal = () => {
 		return (
 			<div className="modal fade" id="addCategory" tabIndex="-1" aria-labelledby="addCategoryLabel" aria-hidden="true">
