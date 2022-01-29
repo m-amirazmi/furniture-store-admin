@@ -1,15 +1,14 @@
 import axios from "axios";
 import { API_URL } from "./configs";
 
-export const uploadFile = async ({ filename, filetype, uploadedby, files }) => {
+export const uploadFile = async ({ filetype, files }) => {
 	const form = new FormData();
-	form.append("fileType", filetype);
-	form.append("fileName", filename);
-	form.append("uploadedBy", uploadedby);
+	if (files.files.length > 1) form.append("multiple", true);
+	else form.append("multiple", false);
 	for (let i = 0; i < files.files.length; i++) {
 		form.append(filetype, files.files[i]);
 	}
-	const url = `${API_URL}/products`;
+	const url = `${API_URL}/files`;
 	const { data } = await axios.post(url, form, {
 		headers: { "Content-Type": "multipart/form-data" },
 	});

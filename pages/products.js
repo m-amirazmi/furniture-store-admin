@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState } from "react";
 import { uploadFile } from "../utils/helpers";
 
@@ -6,8 +5,7 @@ export default function ProductsPage() {
 	const [input, setInput] = useState({});
 
 	const handleAddProduct = async () => {
-		console.log(input.image);
-		const data = await uploadFile({ filename: "yesss", filetype: "image", uploadedby: "Amir", files: input.image });
+		const data = await uploadFile({ filetype: "image", files: input.image });
 		console.log(data);
 	};
 
@@ -29,6 +27,7 @@ export default function ProductsPage() {
 								</label>
 								<input
 									type="file"
+									multiple
 									className="form-control"
 									id="image"
 									placeholder="eg: Chair"
