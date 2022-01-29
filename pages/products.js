@@ -1,9 +1,19 @@
+import axios from "axios";
 import { useState } from "react";
 
 export default function ProductsPage() {
 	const [input, setInput] = useState({});
 
-	const handleAddProduct = () => {};
+	const handleAddProduct = async () => {
+		const formData = new FormData();
+		formData.append("file", input.image);
+		console.log(input);
+		const { data } = await axios.post("/api/products", formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
+	};
 
 	const renderUpdateModal = () => {
 		return (
@@ -17,6 +27,20 @@ export default function ProductsPage() {
 							<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
 						<div className="modal-body">
+							<div className="mb-3">
+								<label htmlFor="name" className="form-label">
+									Product Image
+								</label>
+								<input
+									type="file"
+									className="form-control"
+									id="image"
+									placeholder="eg: Chair"
+									onChange={({ target }) => {
+										setInput({ ...input, [target.id]: target.files[0] });
+									}}
+								/>
+							</div>
 							<div className="mb-3">
 								<label htmlFor="name" className="form-label">
 									Name
@@ -76,9 +100,9 @@ export default function ProductsPage() {
 								<input
 									type="text"
 									className="form-control"
-									id="text"
+									id="sku"
 									placeholder="eg: 12345869"
-									value={input.name}
+									value={input.sku}
 									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
 								/>
 							</div>
@@ -89,9 +113,9 @@ export default function ProductsPage() {
 								<input
 									type="name"
 									className="form-control"
-									id="name"
+									id="colors"
 									placeholder="eg: Chair"
-									value={input.name}
+									value={input.colors}
 									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
 								/>
 							</div>
@@ -102,9 +126,9 @@ export default function ProductsPage() {
 								<input
 									type="number"
 									className="form-control"
-									id="name"
+									id="discount"
 									placeholder="eg: Chair"
-									value={input.name}
+									value={input.discount}
 									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
 								/>
 							</div>
@@ -115,9 +139,9 @@ export default function ProductsPage() {
 								<input
 									type="name"
 									className="form-control"
-									id="name"
+									id="description"
 									placeholder="eg: Chair"
-									value={input.name}
+									value={input.description}
 									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
 								/>
 							</div>
