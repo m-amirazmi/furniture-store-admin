@@ -1,18 +1,14 @@
 import axios from "axios";
 import { useState } from "react";
+import { uploadFile } from "../utils/helpers";
 
 export default function ProductsPage() {
 	const [input, setInput] = useState({});
 
 	const handleAddProduct = async () => {
-		const formData = new FormData();
-		formData.append("file", input.image);
-		console.log(input);
-		const { data } = await axios.post("/api/products", formData, {
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
-		});
+		console.log(input.image);
+		const data = await uploadFile({ filename: "yesss", filetype: "image", uploadedby: "Amir", files: input.image });
+		console.log(data);
 	};
 
 	const renderUpdateModal = () => {
@@ -37,7 +33,7 @@ export default function ProductsPage() {
 									id="image"
 									placeholder="eg: Chair"
 									onChange={({ target }) => {
-										setInput({ ...input, [target.id]: target.files[0] });
+										setInput({ ...input, [target.id]: target });
 									}}
 								/>
 							</div>
@@ -50,6 +46,7 @@ export default function ProductsPage() {
 									className="form-control"
 									id="name"
 									placeholder="eg: Chair"
+									accept="image/*"
 									value={input.name}
 									onChange={({ target }) => setInput({ ...input, [target.id]: target.value })}
 								/>

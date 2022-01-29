@@ -2,7 +2,7 @@
 	"name": "furniture-store-admin",
 	"private": true,
 	"scripts": {
-		"dev": "next dev -- -p 9300",
+		"dev": "next dev -- -p 9500",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint"
