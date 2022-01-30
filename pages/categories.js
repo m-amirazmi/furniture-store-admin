@@ -1,19 +1,12 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
+import { useCategories } from "../hooks/categories";
 
 export default function CategoriesPage() {
-	const [categories, setCategories] = useState();
 	const [input, setInput] = useState({});
 	const [selected, setSelected] = useState({});
 
-	const fetchCategories = useCallback(async () => {
-		const { data } = await axios.get("/api/categories");
-		if (data.length !== 0) setCategories(data);
-	}, []);
-
-	useEffect(() => {
-		fetchCategories();
-	}, [fetchCategories]);
+	const { categories, fetchCategories } = useCategories();
 
 	const handleAddCategory = async (e) => {
 		if (selected._id) await axios.put("/api/categories", input, { params: { id: selected._id } });
