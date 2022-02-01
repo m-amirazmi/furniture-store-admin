@@ -7,18 +7,44 @@ import { uploadFile } from "../utils/helpers";
 
 export default function ProductsPage() {
 	const [input, setInput] = useState({});
+	const [selected, setSelected] = useState({});
 	const [loading, setLoading] = useState(false);
 
 	const { categories } = useCategories();
 	const { products, fetchProducts } = useProducts();
 
+	const clearState = () => {
+		const clearObj = {
+			name: "",
+			price: "",
+			image: "",
+			quantity: "",
+			vendor: "",
+			sku: "",
+			category: "",
+			discount: "",
+			description: "",
+			isFeatured: false,
+		};
+		setSelected(clearObj);
+		setInput(clearObj);
+	};
+
 	const handleAddProduct = async () => {
 		setLoading(true);
-		const { data } = await uploadFile({ filetype: "image", files: input.image });
+
 		const copyInput = { ...input };
-		copyInput.image = data[0]._id;
-		await axios.post("/api/products", copyInput);
-		setInput({});
+		copyInput.image = selected?.image?._id ? selected.image._id : "";
+
+		if (input.image) {
+			const { data } = await uploadFile({ filetype: "image", files: input.image });
+			copyInput.image = data[0]._id;
+		}
+
+		if (selected._id) {
+			await axios.put("/api/products", copyInput, { params: { id: selected._id } });
+		} else await axios.post("/api/products", copyInput);
+		clearState();
 		fetchProducts();
 		setLoading(false);
 	};
@@ -37,7 +63,7 @@ export default function ProductsPage() {
 							<h5 className="modal-title" id="addProductLabel">
 								Update Product
 							</h5>
-							<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={clearState}></button>
 						</div>
 						<div className="modal-body">
 							<div className="row">
@@ -56,6 +82,11 @@ export default function ProductsPage() {
 												setInput({ ...input, [target.id]: target });
 											}}
 										/>
+										{input.image && (
+											<div className="mt-3">
+												<Image width={72} height={108} alt="Preview" src={URL.createObjectURL(input.image.files[0])} />
+											</div>
+										)}
 									</div>
 
 									<div className="mb-3">
@@ -113,7 +144,7 @@ export default function ProductsPage() {
 														SELECT ONE
 													</option>
 													{categories?.map((c) => (
-														<option key={c._id} value={c._id}>
+														<option key={c._id} value={c._id} selected={c._id === input.category}>
 															{c.name}
 														</option>
 													))}
@@ -198,8 +229,7 @@ export default function ProductsPage() {
 								className="btn btn-secondary"
 								data-bs-dismiss="modal"
 								onClick={() => {
-									setInput({ name: "" });
-									setSelected({});
+									clearState();
 								}}
 							>
 								Close
@@ -216,38 +246,60 @@ export default function ProductsPage() {
 
 	const renderProductList = () => {
 		if (products?.length === 0) return null;
-		return products?.map((p) => (
-			<tr key={p._id} style={{ fontSize: "14px" }}>
-				<td className="d-flex gap-2 align-items-center">
-					<div style={{ width: "75px", height: "112.5px", position: "relative" }}>
-						<Image src={p.image.url} layout="fill" objectFit="cover" alt={p.name} />
-					</div>
-					<div className="text-start">
-						<p className="m-0">
-							Name: <span className="fw-bold">{p.name}</span>
-						</p>
-						<p className="m-0">
-							SKU: <span className="fw-bold">{p.sku}</span>
-						</p>
-						<p className="m-0">
-							Vendor: <span className="fw-bold">{p.vendor}</span>
-						</p>
-					</div>
-				</td>
-				<td>{p.quantity}</td>
-				<td>{p.price.toFixed(2)}</td>
-				<td>{p.category.name}</td>
-				<td>{p.discount}</td>
-				<td>{p.description}</td>
-				<td>{p.isFeatured ? "Yes" : "No"}</td>
-				<td>
-					<button className="btn btn-outline-primary mx-1">Edit</button>
-					<button className="btn btn-outline-danger mx-1" onClick={() => handleRemoveProduct(p._id)}>
-						Remove
-					</button>
-				</td>
-			</tr>
-		));
+		return products?.map((p) => {
+			return (
+				<tr key={p._id} style={{ fontSize: "14px" }}>
+					<td className="d-flex gap-2 align-items-center">
+						<div style={{ width: "75px", height: "112.5px", position: "relative" }}>
+							<Image src={p.image.url} layout="fill" objectFit="cover" alt={p.name} />
+						</div>
+						<div className="text-start">
+							<p className="m-0">
+								Name: <span className="fw-bold">{p.name}</span>
+							</p>
+							<p className="m-0">
+								SKU: <span className="fw-bold">{p.sku}</span>
+							</p>
+							<p className="m-0">
+								Vendor: <span className="fw-bold">{p.vendor}</span>
+							</p>
+						</div>
+					</td>
+					<td>{p.quantity}</td>
+					<td>{p.price.toFixed(2)}</td>
+					<td>{p.category?.name}</td>
+					<td>{p.discount}</td>
+					<td>{p.description.substr(0, 50)}...</td>
+					<td>{p.isFeatured ? "Yes" : "No"}</td>
+					<td>
+						<button
+							className="btn btn-outline-primary mx-1"
+							data-bs-toggle="modal"
+							data-bs-target="#addProduct"
+							onClick={() => {
+								setInput({
+									name: p.name,
+									quantity: p.quantity,
+									price: p.price,
+									vendor: p.vendor,
+									sku: p.sku,
+									category: p.category._id,
+									discount: p.discount,
+									isFeatured: p.isFeatured,
+									description: p.description,
+								});
+								setSelected(p);
+							}}
+						>
+							Edit
+						</button>
+						<button className="btn btn-outline-danger mx-1" onClick={() => handleRemoveProduct(p._id)}>
+							Remove
+						</button>
+					</td>
+				</tr>
+			);
+		});
 	};
 
 	return (
@@ -259,21 +311,23 @@ export default function ProductsPage() {
 				{loading ? (
 					<div>Loading...</div>
 				) : (
-					<table className="table table-bordered text-center align-middle">
-						<thead>
-							<tr>
-								<th style={{ width: "30%" }}>Product Detail</th>
-								<th style={{ width: "5%" }}>Quantity</th>
-								<th style={{ width: "10%" }}>Price (RM)</th>
-								<th style={{ width: "10%" }}>Category</th>
-								<th style={{ width: "10%" }}>Discount</th>
-								<th style={{ width: "5%" }}>Description</th>
-								<th style={{ width: "5%" }}>Featured</th>
-								<th style={{ width: "20%" }}></th>
-							</tr>
-						</thead>
-						<tbody>{renderProductList()}</tbody>
-					</table>
+					<div style={{ height: "760px", overflow: "scroll" }}>
+						<table className="table table-bordered text-center align-middle">
+							<thead>
+								<tr>
+									<th style={{ width: "30%" }}>Product Detail</th>
+									<th style={{ width: "5%" }}>Quantity</th>
+									<th style={{ width: "10%" }}>Price (RM)</th>
+									<th style={{ width: "10%" }}>Category</th>
+									<th style={{ width: "10%" }}>Discount</th>
+									<th style={{ width: "5%" }}>Description</th>
+									<th style={{ width: "5%" }}>Featured</th>
+									<th style={{ width: "20%" }}></th>
+								</tr>
+							</thead>
+							<tbody>{renderProductList()}</tbody>
+						</table>
+					</div>
 				)}
 			</div>
 			{renderUpdateModal()}
